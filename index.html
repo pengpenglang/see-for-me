@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>视界引路人 - FaceTime视频助手</title>
+    <title>See For Me</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
         * {
@@ -48,54 +48,6 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-        }
-
-        /* 小窗预览 - PiP风格 */
-        .pip-preview {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 180px;
-            height: 240px;
-            border-radius: 16px;
-            overflow: hidden;
-            background: var(--bg-secondary);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            z-index: 100;
-            cursor: move;
-            transition: transform 0.2s ease;
-        }
-
-        .pip-preview:hover {
-            transform: scale(1.05);
-        }
-
-        .pip-preview video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .pip-placeholder {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
-        }
-
-        .pip-placeholder i {
-            font-size: 48px;
-            margin-bottom: 8px;
-            opacity: 0.5;
-        }
-
-        .pip-placeholder span {
-            font-size: 12px;
-            color: var(--text-secondary);
         }
 
         /* 顶部状态栏 */
@@ -305,7 +257,23 @@
             background: var(--accent-red);
         }
 
-        /* 按钮标签 */
+        /* 语音按钮按下状态 */
+        .btn-voice-recording {
+            background: var(--accent-green) !important;
+            animation: pulse-recording 1s infinite;
+        }
+
+        @keyframes pulse-recording {
+            0%, 100% { 
+                transform: scale(1);
+                box-shadow: 0 4px 16px rgba(48, 209, 88, 0.3);
+            }
+            50% { 
+                transform: scale(1.1);
+                box-shadow: 0 8px 24px rgba(48, 209, 88, 0.6);
+            }
+        }
+
         .btn-label {
             position: absolute;
             bottom: -24px;
@@ -384,13 +352,14 @@
 
         .feature-card h4 {
             font-size: 15px;
+            color: black;
             margin-bottom: 8px;
             font-weight: 600;
         }
 
         .feature-card p {
             font-size: 13px;
-            color: var(--text-secondary);
+            color: black;
             line-height: 1.5;
             margin: 0;
         }
@@ -511,7 +480,7 @@
         }
 
         .action-btn.secondary {
-            background: var(--bg-tertiary);
+            background: var(--accent-blue);
             color: var(--text-primary);
         }
 
@@ -587,13 +556,6 @@
 
         /* 响应式设计 */
         @media (max-width: 768px) {
-            .pip-preview {
-                width: 120px;
-                height: 160px;
-                top: 80px;
-                right: 16px;
-            }
-
             .side-panel {
                 width: 100%;
                 right: -100%;
@@ -759,20 +721,11 @@
             您的浏览器不支持视频标签
         </video>
 
-        <!-- PiP小窗预览 -->
-        <div class="pip-preview" id="pipPreview">
-            <div class="pip-placeholder">
-                <i class="bi bi-person-circle"></i>
-                <span>本地摄像头</span>
-            </div>
-            <video id="localVideo" autoplay muted playsinline style="display: none;"></video>
-        </div>
-
         <!-- 顶部状态栏 -->
         <div class="top-bar">
             <div class="top-bar-left">
                 <div class="app-title">
-                    <i class="bi bi-eye-fill"></i> 视界引路人
+                    <i class="bi bi-eye-fill"></i> See For Me
                 </div>
                 <div class="status-indicator" id="statusIndicator">
                     <div class="status-dot"></div>
@@ -781,63 +734,68 @@
             </div>
             <div class="top-bar-right">
                 <button class="icon-btn" onclick="togglePanel('features')" title="功能面板" aria-label="打开功能面板">
-                    <i class="bi bi-grid-3x3-gap"></i>
+                    <i class="bi bi-grid-3x3-gap"></i> 
                 </button>
                 <button class="icon-btn" onclick="togglePanel('location')" title="位置导航" aria-label="打开位置导航">
-                    <i class="bi bi-geo-alt-fill"></i>
+                    <i class="bi bi-geo-alt-fill"></i> 
                 </button>
                 <button class="icon-btn" onclick="togglePanel('settings')" title="设置" aria-label="打开设置">
-                    <i class="bi bi-gear-fill"></i>
+                    <i class="bi bi-gear-fill"></i> 
                 </button>
             </div>
         </div>
 
         <!-- 快捷面板按钮 - 左侧悬浮 -->
         <div class="quick-panel-buttons">
-            <button class="quick-btn" onclick="quickOpenPanel('features')" id="quickFeaturesBtn" title="快速打开功能面板" aria-label="快速打开功能面板">
-                <i class="bi bi-stars"></i>
-                <span class="quick-btn-label">AI分析</span>
+            <button class="quick-btn" onclick="quickSceneAnalysis()" id="quickSceneBtn" title="智能场景分析" aria-label="智能场景分析">
+                <i class="bi bi-camera-video"></i>
+                <span class="quick-btn-label">场景分析</span>
             </button>
             
-            <button class="quick-btn" onclick="quickOpenPanel('location')" id="quickLocationBtn" title="快速打开位置导航" aria-label="快速打开位置导航">
+            <button class="quick-btn" onclick="quickObstacleMode()" id="quickObstacleBtn" title="避障模式" aria-label="避障模式">
+                <i class="bi bi-shield-check"></i>
+                <span class="quick-btn-label">避障模式</span>
+            </button>
+            
+            <button class="quick-btn" onclick="quickEmotionAnalysis()" id="quickEmotionBtn" title="情感识别" aria-label="情感识别">
+                <i class="bi bi-emoji-smile"></i>
+                <span class="quick-btn-label">情感识别</span>
+            </button>
+
+            <button class="quick-btn" onclick="quickOpenPanel('location')" id="quickLocationBtn" title="位置导航" aria-label="位置导航">
                 <i class="bi bi-compass"></i>
-                <span class="quick-btn-label">导航</span>
-            </button>
-            
-            <button class="quick-btn" onclick="quickAnalyze()" id="quickAnalyzeBtn" title="快速分析" aria-label="快速分析当前画面">
-                <i class="bi bi-lightning-charge-fill"></i>
-                <span class="quick-btn-label">快速分析</span>
+                <span class="quick-btn-label">位置导航</span>
             </button>
         </div>
 
         <!-- 底部控制栏 -->
         <div class="bottom-controls">
             <button class="control-btn btn-secondary" id="muteBtn" onclick="toggleMute()" title="静音" aria-label="切换静音">
-                <i class="bi bi-mic-fill"></i>
+                <i class="bi bi-volume-up-fill"></i> 
                 <span class="btn-label">静音</span>
             </button>
 
             <button class="control-btn btn-secondary" onclick="captureAndAnalyze()" title="分析画面" aria-label="分析当前画面">
-                <i class="bi bi-camera-fill"></i>
+                <i class="bi bi-camera-fill"></i> 
                 <span class="btn-label">分析</span>
             </button>
-
+            
             <button class="control-btn btn-start" id="startBtn" onclick="startVideo()" title="开始" aria-label="开始视频">
-                <i class="bi bi-play-fill"></i>
+                <i class="bi bi-play-fill"></i> 
             </button>
-
+            
             <button class="control-btn btn-end" id="endBtn" onclick="stopVideo()" style="display: none;" title="结束" aria-label="结束视频">
-                <i class="bi bi-x-lg"></i>
+                <i class="bi bi-x-lg"></i> 
             </button>
 
             <button class="control-btn btn-secondary" id="flipBtn" onclick="flipCamera()" title="切换摄像头" aria-label="切换摄像头">
-                <i class="bi bi-arrow-repeat"></i>
+                <i class="bi bi-arrow-repeat"></i> 
                 <span class="btn-label">翻转</span>
             </button>
 
-            <button class="control-btn btn-secondary" id="voiceBtn" onclick="toggleVoice()" title="语音助手" aria-label="切换语音助手">
-                <i class="bi bi-volume-up-fill"></i>
-                <span class="btn-label">语音</span>
+            <button class="control-btn btn-secondary" id="voiceBtn" title="按住说话" aria-label="按住说话">
+                <i class="bi bi-mic-fill"></i> 
+                <span class="btn-label">按住说话</span>
             </button>
         </div>
     </div>
@@ -852,11 +810,11 @@
             <div class="feature-section">
                 <div class="section-header">场景识别</div>
                 <div class="feature-card">
-                    <h4><i class="bi bi-camera-video me-2"></i>智能场景解析</h4>
+                    <h4><i class="bi bi-camera-video me-2"></i> 智能场景解析</h4>
                     <p>实时识别周围环境、障碍物和行人，为您描述周围的世界</p>
                     <div class="btn-group">
                         <button class="action-btn primary" onclick="startSceneAnalysis()">
-                            <i class="bi bi-play-circle me-1"></i>开始分析
+                            <i class="bi bi-play-circle me-1"></i> 开始分析
                         </button>
                     </div>
                 </div>
@@ -864,7 +822,7 @@
                 <div id="analysisResult" style="display: none;">
                     <div class="analysis-card">
                         <div class="analysis-header">
-                            <i class="bi bi-stars"></i>
+                            <i class="bi bi-stars"></i> 
                             <strong>AI分析结果</strong>
                         </div>
                         <div class="analysis-content" id="analysisText"></div>
@@ -875,11 +833,11 @@
             <div class="feature-section">
                 <div class="section-header">避障模式</div>
                 <div class="feature-card">
-                    <h4><i class="bi bi-shield-check me-2"></i>纯避障检测</h4>
+                    <h4><i class="bi bi-shield-check me-2"></i> 纯避障检测</h4>
                     <p>专注检测水洼、车辆和障碍物，保障您的出行安全</p>
                     <div class="btn-group">
                         <button class="action-btn primary" onclick="startObstacleMode()">
-                            <i class="bi bi-radar me-1"></i>启动避障
+                            <i class="bi bi-radar me-1"></i> 启动避障
                         </button>
                     </div>
                 </div>
@@ -888,11 +846,11 @@
             <div class="feature-section">
                 <div class="section-header">情感识别</div>
                 <div class="feature-card">
-                    <h4><i class="bi bi-emoji-smile me-2"></i>表情分析</h4>
+                    <h4><i class="bi bi-emoji-smile me-2"></i> 表情分析</h4>
                     <p>识别面部表情，描述周围人的情绪状态，帮助您更好地感知环境</p>
                     <div class="btn-group">
                         <button class="action-btn secondary" onclick="analyzeFace()">
-                            <i class="bi bi-person-check me-1"></i>分析表情
+                            <i class="bi bi-person-check me-1"></i> 分析表情
                         </button>
                     </div>
                 </div>
@@ -910,12 +868,12 @@
             <div class="feature-section">
                 <div class="section-header">当前位置</div>
                 <button class="action-btn primary" onclick="getCurrentLocation()" style="width: 100%;">
-                    <i class="bi bi-geo-alt-fill me-2"></i>获取当前位置
+                    <i class="bi bi-geo-alt-fill me-2"></i> 获取当前位置
                 </button>
 
                 <div id="locationInfo" class="location-display" style="display: none;">
                     <div class="location-icon">
-                        <i class="bi bi-geo-alt-fill"></i>
+                        <i class="bi bi-geo-alt-fill"></i> 
                     </div>
                     <div class="location-text" id="locationText"></div>
                     <div class="coordinates" id="coordinatesText"></div>
@@ -930,22 +888,22 @@
                 <div class="section-header">周边设施</div>
                 <div class="btn-group" style="flex-wrap: wrap;">
                     <button class="action-btn secondary" onclick="searchFacility('商场')" style="flex: 0 0 calc(50% - 4px);">
-                        <i class="bi bi-building me-1"></i>商场
+                        <i class="bi bi-building me-1"></i> 商场
                     </button>
                     <button class="action-btn secondary" onclick="searchFacility('酒店')" style="flex: 0 0 calc(50% - 4px);">
-                        <i class="bi bi-door-open me-1"></i>酒店
+                        <i class="bi bi-door-open me-1"></i> 酒店
                     </button>
                     <button class="action-btn secondary" onclick="searchFacility('餐厅')" style="flex: 0 0 calc(50% - 4px);">
-                        <i class="bi bi-cup-hot me-1"></i>餐厅
+                        <i class="bi bi-cup-hot me-1"></i> 餐厅
                     </button>
                     <button class="action-btn secondary" onclick="searchFacility('医院')" style="flex: 0 0 calc(50% - 4px);">
-                        <i class="bi bi-hospital me-1"></i>医院
+                        <i class="bi bi-hospital me-1"></i> 医院
                     </button>
                 </div>
 
                 <div class="facility-list" id="facilityList">
                     <div style="text-align: center; padding: 40px 20px; color: var(--text-secondary);">
-                        <i class="bi bi-search" style="font-size: 48px; opacity: 0.3;"></i>
+                        <i class="bi bi-search" style="font-size: 48px; opacity: 0.3;"></i> 
                         <p style="margin-top: 12px;">请先获取位置，然后搜索周边设施</p>
                     </div>
                 </div>
@@ -990,7 +948,7 @@
             <div class="feature-section">
                 <div class="section-header">辅助功能</div>
                 <div class="feature-card">
-                    <h4><i class="bi bi-universal-access me-2"></i>无障碍设置</h4>
+                    <h4><i class="bi bi-universal-access me-2"></i> 无障碍设置</h4>
                     <p>优化盲人和低视力用户的使用体验</p>
                     <div style="margin-top: 12px;">
                         <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
@@ -1032,24 +990,111 @@
         let mapLoaded = false;
         let currentMarker = null;
         let currentPanel = null;
+        let currentFacingMode = 'environment'; // 'user' 或 'environment'
+        let currentAudioElement = null; // 当前正在播放的音频
+        let isMuted = false; // 网页静音状态
+        let isRecording = false; // 语音录制状态
+        let obstacleDetectionInterval = null; // 避障检测定时器
+        let isObstacleModeActive = false; // 避障模式状态
 
         // ============= 初始化 =============
         window.onload = function() {
-            speak('欢迎使用视界引路人，这是您的智能视觉助手');
+            speak('欢迎使用SeeForMe，您的智能生活助手');
             initBaiduMap();
             setupKeyboardShortcuts();
+            initVoiceButton();
             
-            // 自动加载demo视频
-            loadDemoVideo();
+            // 智能初始化视频源
+            initVideoSource();
         };
 
-        // 加载demo视频
-        function loadDemoVideo() {
+        // 智能加载视频源 - 优先demo.mp4，否则摄像头
+        async function initVideoSource() {
             const mainVideo = document.getElementById('mainVideo');
-            mainVideo.src = './demo.mp4';
-            mainVideo.loop = true;
-            mainVideo.muted = false;
-            mainVideo.play().catch(e => console.log('自动播放受限', e));
+            
+            // 检测demo.mp4是否存在
+            const demoExists = await checkFileExists('./demo.mp4');
+            
+            if (demoExists) {
+                // 如果demo.mp4存在，加载它
+                console.log('检测到demo.mp4，加载演示视频');
+                mainVideo.src = './demo.mp4';
+                mainVideo.loop = true;
+                mainVideo.muted = false;
+                mainVideo.play().catch(e => {
+                    console.log('演示视频自动播放受限', e);
+                    showToast('点击屏幕播放演示视频');
+                });
+                speak('已加载演示视频');
+            } else {
+                // 如果demo.mp4不存在，自动启动摄像头
+                // console.log('未检测到demo.mp4，自动启动摄像头');
+                // showToast('未找到演示视频，正在启动摄像头...');
+                // speak('未找到演示视频，正在为您启动摄像头');
+                
+                // 延迟启动，确保页面完全加载
+                setTimeout(async () => {
+                    await startCameraDirectly();
+                }, 1000);
+            }
+        }
+
+        // 检查文件是否存在
+        async function checkFileExists(url) {
+            try {
+                const response = await fetch(url, { method: 'HEAD' });
+                return response.ok;
+            } catch (error) {
+                console.log('文件检测失败:', error);
+                return false;
+            }
+        }
+
+        // 直接启动摄像头（不经过按钮）
+        async function startCameraDirectly() {
+            try {
+                // 获取摄像头
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: currentFacingMode, width: 1280, height: 720 },
+                    audio: false
+                });
+
+                const mainVideo = document.getElementById('mainVideo');
+                mainVideo.srcObject = stream;
+                mainVideo.src = '';
+                mainVideo.muted = true;
+                localStream = stream;
+                
+                // 更新UI状态
+                isVideoActive = true;
+                document.getElementById('startBtn').style.display = 'none';
+                document.getElementById('endBtn').style.display = 'flex';
+                updateStatus('active', '摄像头已启动');
+                showToast('摄像头已启动');
+                speak('摄像头已启动，正在为您捕捉周围环境');
+
+            } catch (error) {
+                console.error('摄像头启动失败:', error);
+                showToast('摄像头启动失败，请检查权限');
+                speak('摄像头启动失败，请检查设备权限，或添加demo.mp4文件');
+                
+                // 显示错误提示
+                const mainVideo = document.getElementById('mainVideo');
+                mainVideo.parentElement.innerHTML += `
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+                                text-align: center; background: var(--blur-bg); backdrop-filter: blur(20px); 
+                                padding: 32px; border-radius: 16px; max-width: 400px;">
+                        <i class="bi bi-camera-video-off" style="font-size: 64px; color: var(--accent-red); margin-bottom: 16px;"></i> 
+                        <h3 style="margin-bottom: 12px;">无法访问摄像头</h3>
+                        <p style="color: var(--text-secondary); margin-bottom: 16px;">
+                            请检查摄像头权限，或在项目目录下添加 demo.mp4 文件作为演示视频
+                        </p>
+                        <button class="action-btn primary" onclick="location.reload()">
+                            <i class="bi bi-arrow-clockwise me-2"></i> 重新加载
+                        </button>
+                    </div>
+                `;
+            }
         }
 
         // ============= Toast通知 =============
@@ -1154,7 +1199,6 @@
         // 更新快捷按钮状态
         function updateQuickButtonsState(activePanelName) {
             const quickButtons = {
-                'features': document.getElementById('quickFeaturesBtn'),
                 'location': document.getElementById('quickLocationBtn')
             };
 
@@ -1184,30 +1228,134 @@
             }, 300);
         }
 
+        // ============= 快捷功能按钮 =============
+        
+        // 1. 智能场景分析
+        async function quickSceneAnalysis() {
+            const btn = document.getElementById('quickSceneBtn');
+            btn.classList.add('active');
+            
+            showToast('正在进行场景分析...');
+            speak('正在为您分析当前场景');
+            
+            // 确保功能面板打开
+            quickOpenPanel('features');
+            
+            // 等待面板动画完成后执行分析
+            setTimeout(async () => {
+                await captureAndAnalyzeScene();
+                btn.classList.remove('active');
+            }, 300);
+        }
+
+        // 2. 避障模式
+        async function quickObstacleMode() {
+            const btn = document.getElementById('quickObstacleBtn');
+            
+            if (isObstacleModeActive) {
+                // 停止避障模式
+                stopObstacleMode();
+            } else {
+                // 启动避障模式
+                startObstacleDetection();
+            }
+        }
+
+        function startObstacleDetection() {
+            if (isObstacleModeActive) return;
+            
+            isObstacleModeActive = true;
+            const btn = document.getElementById('quickObstacleBtn');
+            btn.classList.add('active');
+            
+            showToast('避障模式已启动');
+            speak('避障检测模式已启动，我会为您实时监测前方障碍物');
+            
+            // 模拟障碍物检测 - 每3-8秒随机检测一次
+            function scheduleNextDetection() {
+                if (!isObstacleModeActive) return;
+                
+                const delay = Math.random() * 5000 + 3000; // 3-8秒随机间隔
+                obstacleDetectionInterval = setTimeout(() => {
+                    if (isObstacleModeActive) {
+                        detectObstacle();
+                        scheduleNextDetection();
+                    }
+                }, delay);
+            }
+            
+            scheduleNextDetection();
+        }
+
+        function detectObstacle() {
+            const obstacles = [
+                { type: '台阶', distance: '1米', action: '请小心', icon: '🪜' },
+                { type: '水洼', distance: '2米', action: '建议绕行', icon: '💧' },
+                { type: '车辆', distance: '3米', action: '注意安全', icon: '🚗' },
+                { type: '行人', distance: '1.5米', action: '请注意避让', icon: '🚶' },
+                { type: '障碍物', distance: '2.5米', action: '前方有阻挡', icon: '⚠️' },
+                { type: '低矮物体', distance: '1米', action: '小心碰撞', icon: '📦' }
+            ];
+            
+            const obstacle = obstacles[Math.floor(Math.random() * obstacles.length)];
+            const message = `${obstacle.icon} 前方${obstacle.distance}处有${obstacle.type}，${obstacle.action}`;
+            
+            showToast(message);
+            // 停止之前的语音，播放新的障碍物提醒
+            speak(message);
+        }
+
+        function stopObstacleMode() {
+            if (!isObstacleModeActive) return;
+            
+            isObstacleModeActive = false;
+            const btn = document.getElementById('quickObstacleBtn');
+            btn.classList.remove('active');
+            
+            if (obstacleDetectionInterval) {
+                clearTimeout(obstacleDetectionInterval);
+                obstacleDetectionInterval = null;
+            }
+            
+            showToast('避障模式已停止');
+            speak('避障模式已关闭');
+        }
+
+        // 3. 情感识别
+        async function quickEmotionAnalysis() {
+            const btn = document.getElementById('quickEmotionBtn');
+            btn.classList.add('active');
+            
+            showToast('正在分析表情...');
+            speak('正在分析周围人的表情和情绪');
+            
+            // 确保功能面板打开
+            quickOpenPanel('features');
+            
+            // 等待面板动画完成后执行分析
+            setTimeout(async () => {
+                await captureAndAnalyzeEmotion();
+                btn.classList.remove('active');
+            }, 300);
+        }
+
         // ============= 视频控制 =============
         async function startVideo() {
             if (isVideoActive) return;
 
             try {
+                // 获取摄像头
                 localStream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: 'environment', width: 1280, height: 720 },
+                    video: { facingMode: currentFacingMode, width: 1280, height: 720 },
                     audio: false
                 });
 
-                const localVideo = document.getElementById('localVideo');
                 const mainVideo = document.getElementById('mainVideo');
                 
-                // 将摄像头视频放在主窗口
+                // 将摄像头放在主窗口
                 mainVideo.srcObject = localStream;
                 mainVideo.src = '';
-                
-                // 将demo视频放在PiP
-                const pipPlaceholder = document.querySelector('.pip-placeholder');
-                pipPlaceholder.style.display = 'none';
-                localVideo.style.display = 'block';
-                localVideo.src = './demo.mp4';
-                localVideo.loop = true;
-                localVideo.play();
+                mainVideo.muted = true;
 
                 isVideoActive = true;
                 document.getElementById('startBtn').style.display = 'none';
@@ -1232,16 +1380,22 @@
             }
 
             const mainVideo = document.getElementById('mainVideo');
-            const localVideo = document.getElementById('localVideo');
-            const pipPlaceholder = document.querySelector('.pip-placeholder');
 
-            mainVideo.srcObject = null;
-            localVideo.src = '';
-            localVideo.style.display = 'none';
-            pipPlaceholder.style.display = 'flex';
-
-            // 恢复demo视频
-            loadDemoVideo();
+            // 检查demo.mp4是否存在，决定恢复策略
+            checkFileExists('./demo.mp4').then(exists => {
+                if (exists) {
+                    // 恢复demo视频
+                    mainVideo.srcObject = null;
+                    mainVideo.src = './demo.mp4';
+                    mainVideo.loop = true;
+                    mainVideo.muted = isMuted;
+                    mainVideo.play();
+                } else {
+                    // 显示占位符
+                    mainVideo.srcObject = null;
+                    mainVideo.src = '';
+                }
+            });
 
             isVideoActive = false;
             document.getElementById('startBtn').style.display = 'flex';
@@ -1251,48 +1405,101 @@
             speak('视频已关闭');
         }
 
-        function flipCamera() {
-            speak('正在切换摄像头');
-            showToast('切换摄像头');
-            // 这里可以实现前后摄像头切换逻辑
+        // 切换摄像头（前置/后置）
+        async function flipCamera() {
+            if (!isVideoActive || !localStream) {
+                showToast('请先开启摄像头');
+                speak('请先开启摄像头');
+                return;
+            }
+
+            // 切换摄像头方向
+            currentFacingMode = currentFacingMode === 'environment' ? 'user' : 'environment';
+            
+            showToast('正在切换摄像头...');
+            speak(currentFacingMode === 'user' ? '切换到前置摄像头' : '切换到后置摄像头');
+
+            // 停止当前流
+            if (localStream) {
+                localStream.getTracks().forEach(track => track.stop());
+            }
+
+            try {
+                // 获取新的摄像头流
+                localStream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: currentFacingMode, width: 1280, height: 720 },
+                    audio: false
+                });
+
+                const mainVideo = document.getElementById('mainVideo');
+                mainVideo.srcObject = localStream;
+                mainVideo.muted = isMuted;
+
+                showToast('摄像头已切换');
+                speak('摄像头切换完成');
+
+            } catch (error) {
+                console.error('切换摄像头失败:', error);
+                showToast('切换摄像头失败');
+                speak('切换摄像头失败，可能此设备只有一个摄像头');
+                
+                // 恢复原来的摄像头
+                currentFacingMode = currentFacingMode === 'environment' ? 'user' : 'environment';
+                try {
+                    localStream = await navigator.mediaDevices.getUserMedia({
+                        video: { facingMode: currentFacingMode, width: 1280, height: 720 },
+                        audio: false
+                    });
+                    const mainVideo = document.getElementById('mainVideo');
+                    mainVideo.srcObject = localStream;
+                } catch (e) {
+                    console.error('恢复摄像头失败:', e);
+                }
+            }
         }
 
         // ============= 音频控制 =============
         function toggleMute() {
+            isMuted = !isMuted;
+            
             const muteBtn = document.getElementById('muteBtn');
             const icon = muteBtn.querySelector('i');
             const label = muteBtn.querySelector('.btn-label');
             
-            if (icon.classList.contains('bi-mic-fill')) {
-                icon.className = 'bi bi-mic-mute-fill';
+            // 获取主视频元素
+            const mainVideo = document.getElementById('mainVideo');
+            
+            if (isMuted) {
+                // 静音所有媒体元素
+                mainVideo.muted = true;
+                
+                // 停止所有正在播放的语音
+                stopAllAudio();
+                
+                icon.className = 'bi bi-volume-mute-fill';
                 label.textContent = '取消静音';
                 muteBtn.classList.add('active');
                 showToast('已静音');
             } else {
-                icon.className = 'bi bi-mic-fill';
+                // 取消静音
+                mainVideo.muted = false;
+                
+                icon.className = 'bi bi-volume-up-fill';
                 label.textContent = '静音';
                 muteBtn.classList.remove('active');
                 showToast('已取消静音');
-            }
-        }
-
-        function toggleVoice() {
-            voiceEnabled = !voiceEnabled;
-            const voiceBtn = document.getElementById('voiceBtn');
-            const icon = voiceBtn.querySelector('i');
-            
-            if (voiceEnabled) {
-                icon.className = 'bi bi-volume-up-fill';
-                showToast('语音助手已开启');
-                speak('语音助手已开启');
-            } else {
-                icon.className = 'bi bi-volume-mute-fill';
-                showToast('语音助手已关闭');
+                speak('已取消静音');
             }
         }
 
         // ============= 场景分析 =============
         async function captureAndAnalyze() {
+            // 默认调用场景分析
+            await captureAndAnalyzeScene();
+        }
+
+        // 场景分析 - 独立函数
+        async function captureAndAnalyzeScene() {
             const mainVideo = document.getElementById('mainVideo');
             
             if (!mainVideo.srcObject && !mainVideo.src) {
@@ -1301,17 +1508,58 @@
                 return;
             }
 
-            showToast('正在捕获并分析画面...');
-            speak('正在分析当前画面，请稍候');
+            showToast('正在捕获并分析场景...');
+            speak('正在分析当前场景');
             
             const canvas = document.createElement('canvas');
-            canvas.width = mainVideo.videoWidth || 1280;
-            canvas.height = mainVideo.videoHeight || 720;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(mainVideo, 0, 0);
+            const originalWidth = mainVideo.videoWidth || 1280;
+            const originalHeight = mainVideo.videoHeight || 720;
             
-            const imageData = canvas.toDataURL('image/jpeg', 0.8);
-            await analyzeImage(imageData);
+            // 下采样8倍
+            canvas.width = Math.floor(originalWidth / 8);
+            canvas.height = Math.floor(originalHeight / 8);
+            
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(mainVideo, 0, 0, canvas.width, canvas.height);
+            
+            // 使用较低的质量以减小文件大小
+            const imageData = canvas.toDataURL('image/jpeg', 0.6);
+            
+            console.log(`图像已下采样: ${originalWidth}x${originalHeight} -> ${canvas.width}x${canvas.height}`);
+            
+            await analyzeSceneImage(imageData);
+        }
+
+        // 情感识别 - 独立函数
+        async function captureAndAnalyzeEmotion() {
+            const mainVideo = document.getElementById('mainVideo');
+            
+            if (!mainVideo.srcObject && !mainVideo.src) {
+                speak('请先开启摄像头或加载视频');
+                showToast('请先开启视频');
+                return;
+            }
+
+            showToast('正在捕获并分析表情...');
+            speak('正在分析表情');
+            
+            const canvas = document.createElement('canvas');
+            const originalWidth = mainVideo.videoWidth || 1280;
+            const originalHeight = mainVideo.videoHeight || 720;
+            
+            // 下采样8倍
+            canvas.width = Math.floor(originalWidth / 8);
+            canvas.height = Math.floor(originalHeight / 8);
+            
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(mainVideo, 0, 0, canvas.width, canvas.height);
+            
+            // 使用较低的质量以减小文件大小
+            const imageData = canvas.toDataURL('image/jpeg', 0.6);
+            
+            console.log(`图像已下采样: ${originalWidth}x${originalHeight} -> ${canvas.width}x${canvas.height}`);
+            
+            await analyzeEmotionImage(imageData);
         }
 
         async function startSceneAnalysis() {
@@ -1319,23 +1567,11 @@
             if (currentPanel !== 'features') {
                 quickOpenPanel('features');
             }
-            await captureAndAnalyze();
+            await captureAndAnalyzeScene();
         }
 
         async function startObstacleMode() {
-            showToast('避障模式已启动');
-            speak('避障检测模式已启动，我会为您实时检测前方的障碍物');
-            
-            const mainVideo = document.getElementById('mainVideo');
-            if (!mainVideo.srcObject && !mainVideo.src) {
-                await startVideo();
-            }
-            
-            // 模拟避障检测
-            setTimeout(() => {
-                speak('前方1米处有台阶，请小心');
-                showToast('检测到台阶');
-            }, 3000);
+            startObstacleDetection();
         }
 
         async function analyzeFace() {
@@ -1347,10 +1583,11 @@
                 quickOpenPanel('features');
             }
             
-            await captureAndAnalyze();
+            await captureAndAnalyzeEmotion();
         }
 
-        async function analyzeImage(imageData) {
+        // 场景分析 API 调用
+        async function analyzeSceneImage(imageData) {
             const llmApiKey = document.getElementById('llmApiKey').value;
             
             // 确保分析结果显示区域可见
@@ -1358,10 +1595,10 @@
             resultDiv.style.display = 'block';
             
             const textDiv = document.getElementById('analysisText');
-            textDiv.innerHTML = '<div style="display: flex; align-items: center; gap: 12px;"><div class="loading-spinner"></div><span>正在分析图像，请稍候...</span></div>';
+            textDiv.innerHTML = '<div style="display: flex; align-items: center; gap: 12px;"><div class="loading-spinner"></div><span>正在分析场景...</span></div>';
             
             if (!llmApiKey || llmApiKey === 'YOUR_LLM_API_KEY') {
-                const mockAnalysis = '您面前是一条宽阔的人行道，阳光明媚。前方约3米处有一位面带微笑的女士正朝您走来，看起来非常友善。右侧有一家咖啡店，门口摆放着几把椅子。环境整体安全，无明显障碍物。';
+                const mockAnalysis = '前方人行道，右侧咖啡店，一位女士微笑走来，环境安全。';
                 displayAnalysis(mockAnalysis);
                 return;
             }
@@ -1380,7 +1617,7 @@
                             content: [
                                 { 
                                     type: 'text', 
-                                    text: '请详细描述这个场景，包括：1.整体环境；2.障碍物位置；3.人物表情和姿态（如果有）；4.安全提示。请用温暖、友好的语气，帮助盲人用户理解周围环境。'
+                                    text: '请用凝练、简洁的语气，在80字内描述当前场景。内容包括：1. 环境与方位（如公园、街道、室内等）；2. 障碍物或人群位置；3. 整体氛围；4. 安全提示；5. 自动推测盲人可能的目的（如走向门口、空位、出入口等），并提供简短路径指引。语气自然温暖，语言简洁。'
                                 },
                                 { 
                                     type: 'image_url', 
@@ -1388,7 +1625,7 @@
                                 }
                             ]
                         }],
-                        max_tokens: 1000
+                        max_tokens: 200
                     })
                 });
 
@@ -1397,13 +1634,69 @@
                 displayAnalysis(analysis);
 
             } catch (error) {
-                console.error('分析失败:', error);
+                console.error('场景分析失败:', error);
                 textDiv.innerHTML = '<p style="color: var(--accent-red);">分析失败，请检查网络连接和API配置</p>';
-                showToast('分析失败，请检查网络连接');
-                speak('图像分析失败，请稍后重试');
+                showToast('分析失败');
+                speak('分析失败，请稍后重试');
             }
         }
 
+        // 情感识别 API 调用
+        async function analyzeEmotionImage(imageData) {
+            const llmApiKey = document.getElementById('llmApiKey').value;
+            
+            // 确保分析结果显示区域可见
+            const resultDiv = document.getElementById('analysisResult');
+            resultDiv.style.display = 'block';
+            
+            const textDiv = document.getElementById('analysisText');
+            textDiv.innerHTML = '<div style="display: flex; align-items: center; gap: 12px;"><div class="loading-spinner"></div><span>正在分析表情...</span></div>';
+            
+            if (!llmApiKey || llmApiKey === 'YOUR_LLM_API_KEY') {
+                const mockAnalysis = '画面中有3位人物：左侧男士面带微笑，显得轻松愉快；中间女士表情平静，似在专注工作；右侧老人神情慈祥温和。整体氛围友好和谐。';
+                displayAnalysis(mockAnalysis);
+                return;
+            }
+
+            try {
+                const response = await fetch('https://api.csun.site/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${llmApiKey}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        model: 'gpt-4o-mini',
+                        messages: [{
+                            role: 'user',
+                            content: [
+                                { 
+                                    type: 'text', 
+                                    text: '请专注分析画面中人物的面部表情和情绪状态。在80字内描述：1. 识别画面中有几个人；2. 每个人的位置（左、中、右等）；3. 每个人的表情特征（微笑、严肃、悲伤、惊讶等）；4. 推测他们的情绪状态和可能的心情；5. 整体氛围（友好、紧张、轻松等）。语气温和，描述细腻。'
+                                },
+                                { 
+                                    type: 'image_url', 
+                                    image_url: { url: imageData } 
+                                }
+                            ]
+                        }],
+                        max_tokens: 200
+                    })
+                });
+
+                const data = await response.json();
+                const analysis = data.choices[0].message.content;
+                displayAnalysis(analysis);
+
+            } catch (error) {
+                console.error('情感识别失败:', error);
+                textDiv.innerHTML = '<p style="color: var(--accent-red);">分析失败，请检查网络连接和API配置</p>';
+                showToast('分析失败');
+                speak('分析失败，请稍后重试');
+            }
+        }
+
+        // 通用的分析结果显示函数
         function displayAnalysis(text) {
             const resultDiv = document.getElementById('analysisResult');
             const textDiv = document.getElementById('analysisText');
@@ -1563,7 +1856,7 @@
             if (facilities.length === 0) {
                 listContainer.innerHTML = `
                     <div style="text-align: center; padding: 40px 20px; color: var(--text-secondary);">
-                        <i class="bi bi-search" style="font-size: 48px; opacity: 0.3;"></i>
+                        <i class="bi bi-search" style="font-size: 48px; opacity: 0.3;"></i> 
                         <p style="margin-top: 12px;">未找到附近的${type}</p>
                     </div>
                 `;
@@ -1574,14 +1867,14 @@
             listContainer.innerHTML = facilities.map((f, index) => `
                 <div class="facility-item" onclick="selectFacility(${index}, '${type}')">
                     <div class="facility-name">
-                        <i class="bi bi-geo-alt-fill" style="color: var(--accent-blue); margin-right: 6px;"></i>
+                        <i class="bi bi-geo-alt-fill" style="color: var(--accent-blue); margin-right: 6px;"></i> 
                         ${f.name}
                     </div>
                     <div class="facility-address">${f.address}</div>
                     <div class="facility-meta">
                         <span class="facility-distance">${f.distance}米 · ${f.direction}方向</span>
-                        <span><i class="bi bi-star-fill" style="color: #ffb800;"></i> ${f.rating}</span>
-                        ${f.accessible ? '<span style="color: var(--accent-green);"><i class="bi bi-universal-access"></i> 无障碍</span>' : ''}
+                        <span><i class="bi bi-star-fill" style="color: #ffb800;"></i>  ${f.rating}</span>
+                        ${f.accessible ? '<span style="color: var(--accent-green);"><i class="bi bi-universal-access"></i>  无障碍</span>' : ''}
                     </div>
                 </div>
             `).join('');
@@ -1606,9 +1899,13 @@
             showToast(`导航至${facility.name}`);
         }
 
-        // ============= 语音合成 =============
+        // ============= 语音合成控制 =============
+        // 确保同一时间只有一个语音在播放
         async function speak(text) {
-            if (!voiceEnabled) return;
+            if (!voiceEnabled || isMuted) return;
+
+            // 停止当前正在播放的语音
+            stopAllAudio();
 
             try {
                 const apiKey = document.getElementById('siliconflowApiKey').value;
@@ -1622,12 +1919,26 @@
 
             // 回退到浏览器语音
             if ('speechSynthesis' in window) {
-                speechSynthesis.cancel();
                 const utterance = new SpeechSynthesisUtterance(text);
                 utterance.lang = 'zh-CN';
                 utterance.rate = 1.0;
                 utterance.pitch = 1.0;
                 speechSynthesis.speak(utterance);
+            }
+        }
+
+        // 停止所有正在播放的音频
+        function stopAllAudio() {
+            // 停止当前音频元素
+            if (currentAudioElement) {
+                currentAudioElement.pause();
+                currentAudioElement.currentTime = 0;
+                currentAudioElement = null;
+            }
+            
+            // 停止浏览器语音合成
+            if ('speechSynthesis' in window) {
+                speechSynthesis.cancel();
             }
         }
 
@@ -1644,7 +1955,7 @@
                     voice: 'fnlp/MOSS-TTSD-v0.5:alex',
                     response_format: 'mp3',
                     sample_rate: 32000,
-                    speed: 1.3
+                    speed: 1.
                 })
             });
 
@@ -1669,8 +1980,689 @@
                 audioUrl = URL.createObjectURL(blob);
             }
 
+            // 创建新的音频元素并播放
             const audio = new Audio(audioUrl);
+            currentAudioElement = audio;
+            
+            audio.onended = () => {
+                if (currentAudioElement === audio) {
+                    currentAudioElement = null;
+                }
+                URL.revokeObjectURL(audioUrl);
+            };
+            
             await audio.play();
+        }
+
+        // ============= 快捷功能按钮 =============
+        
+        // 1. 智能场景分析
+        async function quickSceneAnalysis() {
+            const btn = document.getElementById('quickSceneBtn');
+            btn.classList.add('active');
+            
+            showToast('正在进行场景分析...');
+            speak('正在为您分析当前场景');
+            
+            // 确保功能面板打开
+            quickOpenPanel('features');
+            
+            // 等待面板动画完成后执行分析
+            setTimeout(async () => {
+                await captureAndAnalyzeScene();
+                btn.classList.remove('active');
+            }, 300);
+        }
+
+        // 2. 避障模式
+        async function quickObstacleMode() {
+            const btn = document.getElementById('quickObstacleBtn');
+            
+            if (isObstacleModeActive) {
+                // 停止避障模式
+                stopObstacleMode();
+            } else {
+                // 启动避障模式
+                startObstacleDetection();
+            }
+        }
+
+        function startObstacleDetection() {
+            if (isObstacleModeActive) return;
+            
+            isObstacleModeActive = true;
+            const btn = document.getElementById('quickObstacleBtn');
+            btn.classList.add('active');
+            
+            showToast('避障模式已启动');
+            speak('避障检测模式已启动，我会为您实时监测前方障碍物');
+            
+            // 模拟障碍物检测 - 每3-8秒随机检测一次
+            function scheduleNextDetection() {
+                if (!isObstacleModeActive) return;
+                
+                const delay = Math.random() * 5000 + 3000; // 3-8秒随机间隔
+                obstacleDetectionInterval = setTimeout(() => {
+                    if (isObstacleModeActive) {
+                        detectObstacle();
+                        scheduleNextDetection();
+                    }
+                }, delay);
+            }
+            
+            scheduleNextDetection();
+        }
+
+        function detectObstacle() {
+            const obstacles = [
+                { type: '台阶', distance: '1米', action: '请小心', icon: '🪜' },
+                { type: '水洼', distance: '2米', action: '建议绕行', icon: '💧' },
+                { type: '车辆', distance: '3米', action: '注意安全', icon: '🚗' },
+                { type: '行人', distance: '1.5米', action: '请注意避让', icon: '🚶' },
+                { type: '障碍物', distance: '2.5米', action: '前方有阻挡', icon: '⚠️' },
+                { type: '低矮物体', distance: '1米', action: '小心碰撞', icon: '📦' }
+            ];
+            
+            const obstacle = obstacles[Math.floor(Math.random() * obstacles.length)];
+            const message = `${obstacle.icon} 前方${obstacle.distance}处有${obstacle.type}，${obstacle.action}`;
+            
+            showToast(message);
+            // 停止之前的语音，播放新的障碍物提醒
+            speak(message);
+        }
+
+        function stopObstacleMode() {
+            if (!isObstacleModeActive) return;
+            
+            isObstacleModeActive = false;
+            const btn = document.getElementById('quickObstacleBtn');
+            btn.classList.remove('active');
+            
+            if (obstacleDetectionInterval) {
+                clearTimeout(obstacleDetectionInterval);
+                obstacleDetectionInterval = null;
+            }
+            
+            showToast('避障模式已停止');
+            speak('避障模式已关闭');
+        }
+
+        // 3. 情感识别
+        async function quickEmotionAnalysis() {
+            const btn = document.getElementById('quickEmotionBtn');
+            btn.classList.add('active');
+            
+            showToast('正在分析表情...');
+            speak('正在分析周围人的表情和情绪');
+            
+            // 确保功能面板打开
+            quickOpenPanel('features');
+            
+            // 等待面板动画完成后执行分析
+            setTimeout(async () => {
+                await captureAndAnalyzeEmotion();
+                btn.classList.remove('active');
+            }, 300);
+        }
+
+        // ============= 视频控制 =============
+        async function startVideo() {
+            if (isVideoActive) return;
+
+            try {
+                // 获取摄像头
+                localStream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: currentFacingMode, width: 1280, height: 720 },
+                    audio: false
+                });
+
+                const mainVideo = document.getElementById('mainVideo');
+                
+                // 将摄像头放在主窗口
+                mainVideo.srcObject = localStream;
+                mainVideo.src = '';
+                mainVideo.muted = true;
+
+                isVideoActive = true;
+                document.getElementById('startBtn').style.display = 'none';
+                document.getElementById('endBtn').style.display = 'flex';
+                updateStatus('active', '视频通话中');
+                showToast('视频已开启');
+                speak('摄像头已开启，正在为您捕捉周围环境');
+
+            } catch (error) {
+                console.error('无法访问摄像头:', error);
+                showToast('无法访问摄像头，请检查权限');
+                speak('无法访问摄像头，请检查设备权限');
+            }
+        }
+
+        function stopVideo() {
+            if (!isVideoActive) return;
+
+            if (localStream) {
+                localStream.getTracks().forEach(track => track.stop());
+                localStream = null;
+            }
+
+            const mainVideo = document.getElementById('mainVideo');
+
+            // 检查demo.mp4是否存在，决定恢复策略
+            checkFileExists('./demo.mp4').then(exists => {
+                if (exists) {
+                    // 恢复demo视频
+                    mainVideo.srcObject = null;
+                    mainVideo.src = './demo.mp4';
+                    mainVideo.loop = true;
+                    mainVideo.muted = isMuted;
+                    mainVideo.play();
+                } else {
+                    // 显示占位符
+                    mainVideo.srcObject = null;
+                    mainVideo.src = '';
+                }
+            });
+
+            isVideoActive = false;
+            document.getElementById('startBtn').style.display = 'flex';
+            document.getElementById('endBtn').style.display = 'none';
+            updateStatus('inactive', '就绪');
+            showToast('视频已关闭');
+            speak('视频已关闭');
+        }
+
+        // 切换摄像头（前置/后置）
+        async function flipCamera() {
+            if (!isVideoActive || !localStream) {
+                showToast('请先开启摄像头');
+                speak('请先开启摄像头');
+                return;
+            }
+
+            // 切换摄像头方向
+            currentFacingMode = currentFacingMode === 'environment' ? 'user' : 'environment';
+            
+            showToast('正在切换摄像头...');
+            speak(currentFacingMode === 'user' ? '切换到前置摄像头' : '切换到后置摄像头');
+
+            // 停止当前流
+            if (localStream) {
+                localStream.getTracks().forEach(track => track.stop());
+            }
+
+            try {
+                // 获取新的摄像头流
+                localStream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: currentFacingMode, width: 1280, height: 720 },
+                    audio: false
+                });
+
+                const mainVideo = document.getElementById('mainVideo');
+                mainVideo.srcObject = localStream;
+                mainVideo.muted = isMuted;
+
+                showToast('摄像头已切换');
+                speak('摄像头切换完成');
+
+            } catch (error) {
+                console.error('切换摄像头失败:', error);
+                showToast('切换摄像头失败');
+                speak('切换摄像头失败，可能此设备只有一个摄像头');
+                
+                // 恢复原来的摄像头
+                currentFacingMode = currentFacingMode === 'environment' ? 'user' : 'environment';
+                try {
+                    localStream = await navigator.mediaDevices.getUserMedia({
+                        video: { facingMode: currentFacingMode, width: 1280, height: 720 },
+                        audio: false
+                    });
+                    const mainVideo = document.getElementById('mainVideo');
+                    mainVideo.srcObject = localStream;
+                } catch (e) {
+                    console.error('恢复摄像头失败:', e);
+                }
+            }
+        }
+
+        // ============= 音频控制 =============
+        function toggleMute() {
+            isMuted = !isMuted;
+            
+            const muteBtn = document.getElementById('muteBtn');
+            const icon = muteBtn.querySelector('i');
+            const label = muteBtn.querySelector('.btn-label');
+            
+            // 获取主视频元素
+            const mainVideo = document.getElementById('mainVideo');
+            
+            if (isMuted) {
+                // 静音所有媒体元素
+                mainVideo.muted = true;
+                
+                // 停止所有正在播放的语音
+                stopAllAudio();
+                
+                icon.className = 'bi bi-volume-mute-fill';
+                label.textContent = '取消静音';
+                muteBtn.classList.add('active');
+                showToast('已静音');
+            } else {
+                // 取消静音
+                mainVideo.muted = false;
+                
+                icon.className = 'bi bi-volume-up-fill';
+                label.textContent = '静音';
+                muteBtn.classList.remove('active');
+                showToast('已取消静音');
+                speak('已取消静音');
+            }
+        }
+
+        // ============= 场景分析 =============
+        async function captureAndAnalyze() {
+            // 默认调用场景分析
+            await captureAndAnalyzeScene();
+        }
+
+        // 场景分析 - 独立函数
+        async function captureAndAnalyzeScene() {
+            const mainVideo = document.getElementById('mainVideo');
+            
+            if (!mainVideo.srcObject && !mainVideo.src) {
+                speak('请先开启摄像头或加载视频');
+                showToast('请先开启视频');
+                return;
+            }
+
+            showToast('正在捕获并分析场景...');
+            speak('正在分析当前场景');
+            
+            const canvas = document.createElement('canvas');
+            const originalWidth = mainVideo.videoWidth || 1280;
+            const originalHeight = mainVideo.videoHeight || 720;
+            
+            // 下采样8倍
+            canvas.width = Math.floor(originalWidth / 8);
+            canvas.height = Math.floor(originalHeight / 8);
+            
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(mainVideo, 0, 0, canvas.width, canvas.height);
+            
+            // 使用较低的质量以减小文件大小
+            const imageData = canvas.toDataURL('image/jpeg', 0.6);
+            
+            console.log(`图像已下采样: ${originalWidth}x${originalHeight} -> ${canvas.width}x${canvas.height}`);
+            
+            await analyzeSceneImage(imageData);
+        }
+
+        // 情感识别 - 独立函数
+        async function captureAndAnalyzeEmotion() {
+            const mainVideo = document.getElementById('mainVideo');
+            
+            if (!mainVideo.srcObject && !mainVideo.src) {
+                speak('请先开启摄像头或加载视频');
+                showToast('请先开启视频');
+                return;
+            }
+
+            showToast('正在捕获并分析表情...');
+            speak('正在分析表情');
+            
+            const canvas = document.createElement('canvas');
+            const originalWidth = mainVideo.videoWidth || 1280;
+            const originalHeight = mainVideo.videoHeight || 720;
+            
+            // 下采样8倍
+            canvas.width = Math.floor(originalWidth / 8);
+            canvas.height = Math.floor(originalHeight / 8);
+            
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(mainVideo, 0, 0, canvas.width, canvas.height);
+            
+            // 使用较低的质量以减小文件大小
+            const imageData = canvas.toDataURL('image/jpeg', 0.6);
+            
+            console.log(`图像已下采样: ${originalWidth}x${originalHeight} -> ${canvas.width}x${canvas.height}`);
+            
+            await analyzeEmotionImage(imageData);
+        }
+
+        async function startSceneAnalysis() {
+            // 确保面板打开
+            if (currentPanel !== 'features') {
+                quickOpenPanel('features');
+            }
+            await captureAndAnalyzeScene();
+        }
+
+        async function startObstacleMode() {
+            startObstacleDetection();
+        }
+
+        async function analyzeFace() {
+            showToast('正在分析面部表情...');
+            speak('正在分析周围人的表情');
+            
+            // 确保面板打开
+            if (currentPanel !== 'features') {
+                quickOpenPanel('features');
+            }
+            
+            await captureAndAnalyzeEmotion();
+        }
+
+        // 场景分析 API 调用
+        async function analyzeSceneImage(imageData) {
+            const llmApiKey = document.getElementById('llmApiKey').value;
+            
+            // 确保分析结果显示区域可见
+            const resultDiv = document.getElementById('analysisResult');
+            resultDiv.style.display = 'block';
+            
+            const textDiv = document.getElementById('analysisText');
+            textDiv.innerHTML = '<div style="display: flex; align-items: center; gap: 12px;"><div class="loading-spinner"></div><span>正在分析场景...</span></div>';
+            
+            if (!llmApiKey || llmApiKey === 'YOUR_LLM_API_KEY') {
+                const mockAnalysis = '前方人行道，右侧咖啡店，一位女士微笑走来，环境安全。';
+                displayAnalysis(mockAnalysis);
+                return;
+            }
+
+            try {
+                const response = await fetch('https://api.csun.site/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${llmApiKey}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        model: 'gpt-4o-mini',
+                        messages: [{
+                            role: 'user',
+                            content: [
+                                { 
+                                    type: 'text', 
+                                    text: '请用凝练、简洁的语气，在80字内描述当前场景。内容包括：1. 环境与方位（如公园、街道、室内等）；2. 障碍物或人群位置；3. 整体氛围；4. 安全提示；5. 自动推测盲人可能的目的（如走向门口、空位、出入口等），并提供简短路径指引。语气自然温暖，语言简洁。'
+                                },
+                                { 
+                                    type: 'image_url', 
+                                    image_url: { url: imageData } 
+                                }
+                            ]
+                        }],
+                        max_tokens: 200
+                    })
+                });
+
+                const data = await response.json();
+                const analysis = data.choices[0].message.content;
+                displayAnalysis(analysis);
+
+            } catch (error) {
+                console.error('场景分析失败:', error);
+                textDiv.innerHTML = '<p style="color: var(--accent-red);">分析失败，请检查网络连接和API配置</p>';
+                showToast('分析失败');
+                speak('分析失败，请稍后重试');
+            }
+        }
+
+        // 情感识别 API 调用
+        async function analyzeEmotionImage(imageData) {
+            const llmApiKey = document.getElementById('llmApiKey').value;
+            
+            // 确保分析结果显示区域可见
+            const resultDiv = document.getElementById('analysisResult');
+            resultDiv.style.display = 'block';
+            
+            const textDiv = document.getElementById('analysisText');
+            textDiv.innerHTML = '<div style="display: flex; align-items: center; gap: 12px;"><div class="loading-spinner"></div><span>正在分析表情...</span></div>';
+            
+            if (!llmApiKey || llmApiKey === 'YOUR_LLM_API_KEY') {
+                const mockAnalysis = '画面中有3位人物：左侧男士面带微笑，显得轻松愉快；中间女士表情平静，似在专注工作；右侧老人神情慈祥温和。整体氛围友好和谐。';
+                displayAnalysis(mockAnalysis);
+                return;
+            }
+
+            try {
+                const response = await fetch('https://api.csun.site/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${llmApiKey}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        model: 'gpt-4o-mini',
+                        messages: [{
+                            role: 'user',
+                            content: [
+                                { 
+                                    type: 'text', 
+                                    text: '请专注分析画面中人物的面部表情和情绪状态。在80字内描述：1. 识别画面中有几个人；2. 每个人的位置（左、中、右等）；3. 每个人的表情特征（微笑、严肃、悲伤、惊讶等）；4. 推测他们的情绪状态和可能的心情；5. 整体氛围（友好、紧张、轻松等）。语气温和，描述细腻。'
+                                },
+                                { 
+                                    type: 'image_url', 
+                                    image_url: { url: imageData } 
+                                }
+                            ]
+                        }],
+                        max_tokens: 200
+                    })
+                });
+
+                const data = await response.json();
+                const analysis = data.choices[0].message.content;
+                displayAnalysis(analysis);
+
+            } catch (error) {
+                console.error('情感识别失败:', error);
+                textDiv.innerHTML = '<p style="color: var(--accent-red);">分析失败，请检查网络连接和API配置</p>';
+                showToast('分析失败');
+                speak('分析失败，请稍后重试');
+            }
+        }
+
+        // 通用的分析结果显示函数
+        function displayAnalysis(text) {
+            const resultDiv = document.getElementById('analysisResult');
+            const textDiv = document.getElementById('analysisText');
+            
+            resultDiv.style.display = 'block';
+            textDiv.textContent = text;
+            
+            showToast('分析完成');
+            speak(text);
+            
+            // 确保面板打开并滚动到分析结果
+            if (currentPanel !== 'features') {
+                quickOpenPanel('features');
+            }
+            
+            // 滚动到分析结果
+            setTimeout(() => {
+                resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 400);
+        }
+
+        // ============= 位置服务 =============
+        function initBaiduMap() {
+            const apiKey = document.getElementById('baiduApiKey').value;
+            if (apiKey && apiKey !== 'YOUR_BAIDU_API_KEY') {
+                const script = document.createElement('script');
+                script.src = `https://api.map.baidu.com/api?v=3.0&ak=${apiKey}&callback=onMapLoaded`;
+                document.head.appendChild(script);
+            }
+        }
+
+        function onMapLoaded() {
+            mapLoaded = true;
+            const mapContainer = document.getElementById('baiduMap');
+            baiduMap = new BMap.Map(mapContainer);
+            baiduMap.centerAndZoom(new BMap.Point(116.404, 39.915), 15);
+            baiduMap.enableScrollWheelZoom(true);
+            console.log('百度地图已加载');
+        }
+
+        async function getCurrentLocation() {
+            showToast('正在获取位置...');
+            speak('正在获取您的当前位置');
+
+            try {
+                const position = await new Promise((resolve, reject) => {
+                    navigator.geolocation.getCurrentPosition(resolve, reject, {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 0
+                    });
+                });
+
+                currentLocation = {
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude
+                };
+
+                const locationInfo = document.getElementById('locationInfo');
+                const locationText = document.getElementById('locationText');
+                const coordinatesText = document.getElementById('coordinatesText');
+                const mapWrapper = document.getElementById('mapWrapper');
+
+                // 显示位置信息
+                locationText.textContent = '已获取您的位置';
+                coordinatesText.textContent = `经度: ${currentLocation.longitude.toFixed(6)}, 纬度: ${currentLocation.latitude.toFixed(6)}`;
+                locationInfo.style.display = 'block';
+                mapWrapper.style.display = 'block';
+
+                // 在地图上标记
+                if (mapLoaded && baiduMap) {
+                    const point = new BMap.Point(currentLocation.longitude, currentLocation.latitude);
+                    
+                    if (currentMarker) {
+                        baiduMap.removeOverlay(currentMarker);
+                    }
+                    
+                    currentMarker = new BMap.Marker(point);
+                    baiduMap.addOverlay(currentMarker);
+                    baiduMap.centerAndZoom(point, 16);
+
+                    // 逆地理编码获取地址
+                    const geocoder = new BMap.Geocoder();
+                    geocoder.getLocation(point, result => {
+                        if (result) {
+                            locationText.textContent = result.address;
+                            speak(`您当前在${result.address}`);
+                        }
+                    });
+                } else {
+                    speak('位置已获取');
+                }
+
+                showToast('位置获取成功');
+                
+                // 打开位置面板
+                if (currentPanel !== 'location') {
+                    quickOpenPanel('location');
+                }
+
+            } catch (error) {
+                console.error('定位失败:', error);
+                showToast('定位失败，请检查权限');
+                speak('无法获取位置，请确保已授予定位权限');
+            }
+        }
+
+        async function searchFacility(type) {
+            if (!currentLocation) {
+                showToast('请先获取当前位置');
+                speak('请先获取您的当前位置');
+                return;
+            }
+
+            showToast(`正在搜索附近的${type}...`);
+            speak(`正在为您搜索附近的${type}`);
+
+            // 模拟搜索结果
+            const facilities = generateMockFacilities(type);
+            displayFacilities(facilities, type);
+        }
+
+        function generateMockFacilities(type) {
+            const facilities = [
+                {
+                    name: `星光${type}`,
+                    address: '中关村大街123号',
+                    distance: 200,
+                    direction: '东北',
+                    rating: 4.8,
+                    accessible: true
+                },
+                {
+                    name: `新世纪${type}`,
+                    address: '海淀路456号',
+                    distance: 350,
+                    direction: '正东',
+                    rating: 4.5,
+                    accessible: true
+                },
+                {
+                    name: `蓝天${type}`,
+                    address: '学院南路789号',
+                    distance: 520,
+                    direction: '东南',
+                    rating: 4.3,
+                    accessible: false
+                }
+            ];
+
+            return facilities;
+        }
+
+        function displayFacilities(facilities, type) {
+            const listContainer = document.getElementById('facilityList');
+            
+            if (facilities.length === 0) {
+                listContainer.innerHTML = `
+                    <div style="text-align: center; padding: 40px 20px; color: var(--text-secondary);">
+                        <i class="bi bi-search" style="font-size: 48px; opacity: 0.3;"></i> 
+                        <p style="margin-top: 12px;">未找到附近的${type}</p>
+                    </div>
+                `;
+                speak(`未找到附近的${type}`);
+                return;
+            }
+
+            listContainer.innerHTML = facilities.map((f, index) => `
+                <div class="facility-item" onclick="selectFacility(${index}, '${type}')">
+                    <div class="facility-name">
+                        <i class="bi bi-geo-alt-fill" style="color: var(--accent-blue); margin-right: 6px;"></i> 
+                        ${f.name}
+                    </div>
+                    <div class="facility-address">${f.address}</div>
+                    <div class="facility-meta">
+                        <span class="facility-distance">${f.distance}米 · ${f.direction}方向</span>
+                        <span><i class="bi bi-star-fill" style="color: #ffb800;"></i>  ${f.rating}</span>
+                        ${f.accessible ? '<span style="color: var(--accent-green);"><i class="bi bi-universal-access"></i>  无障碍</span>' : ''}
+                    </div>
+                </div>
+            `).join('');
+
+            speak(`找到${facilities.length}个附近的${type}，最近的是${facilities[0].name}，距离${facilities[0].distance}米，在您的${facilities[0].direction}方向`);
+            showToast(`找到${facilities.length}个${type}`);
+        }
+
+        function selectFacility(index, type) {
+            const facilities = generateMockFacilities(type);
+            const facility = facilities[index];
+            
+            const directions = [
+                `从您的位置向${facility.direction}方向前进约${facility.distance}米，${facility.name}就在您的右手边。`,
+                `请沿当前道路向${facility.direction}走${facility.distance}米，注意观察路标。`,
+                `距离${facility.name}约${facility.distance}米，建议使用导航辅助。`
+            ];
+            
+            const direction = directions[Math.floor(Math.random() * directions.length)];
+            
+            speak(`已选择${facility.name}。${direction}`);
+            showToast(`导航至${facility.name}`);
         }
 
         // ============= 状态更新 =============
@@ -1704,7 +2696,7 @@
                 // C - 捕获并分析
                 if (e.code === 'KeyC' && !e.target.matches('input')) {
                     e.preventDefault();
-                    quickAnalyze();
+                    quickSceneAnalysis();
                 }
                 
                 // L - 获取位置
@@ -1713,10 +2705,22 @@
                     getCurrentLocation();
                 }
                 
-                // V - 切换语音
-                if (e.code === 'KeyV' && !e.target.matches('input')) {
+                // V - 按住录音
+                if (e.code === 'KeyV' && !e.target.matches('input') && !isRecording) {
                     e.preventDefault();
-                    toggleVoice();
+                    startVoiceRecording();
+                }
+                
+                // O - 切换避障模式
+                if (e.code === 'KeyO' && !e.target.matches('input')) {
+                    e.preventDefault();
+                    quickObstacleMode();
+                }
+                
+                // E - 情感识别
+                if (e.code === 'KeyE' && !e.target.matches('input')) {
+                    e.preventDefault();
+                    quickEmotionAnalysis();
                 }
                 
                 // F - 打开功能面板
@@ -1731,18 +2735,146 @@
                     quickOpenPanel('location');
                 }
                 
-                // Escape - 关闭面板
+                // Escape - 关闭面板或停止避障模式
                 if (e.code === 'Escape') {
-                    if (currentPanel) {
+                    if (isObstacleModeActive) {
+                        stopObstacleMode();
+                    } else if (currentPanel) {
                         closeAllPanels();
                         showToast('面板已关闭');
                     }
+                }
+            });
+            
+            // V键松开停止录音
+            document.addEventListener('keyup', (e) => {
+                if (e.code === 'KeyV' && !e.target.matches('input') && isRecording) {
+                    e.preventDefault();
+                    stopVoiceRecording();
                 }
             });
         }
 
         // 让百度地图的回调函数全局可用
         window.loadBaiduMap = onMapLoaded;
+
+        // ============= 语音录制按钮 =============
+        function initVoiceButton() {
+            const voiceBtn = document.getElementById('voiceBtn');
+            
+            // 鼠标事件
+            voiceBtn.addEventListener('mousedown', startVoiceRecording);
+            voiceBtn.addEventListener('mouseup', stopVoiceRecording);
+            voiceBtn.addEventListener('mouseleave', () => {
+                if (isRecording) {
+                    stopVoiceRecording();
+                }
+            });
+            
+            // 触摸事件（移动设备）
+            voiceBtn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                startVoiceRecording();
+            });
+            voiceBtn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                stopVoiceRecording();
+            });
+            voiceBtn.addEventListener('touchcancel', () => {
+                if (isRecording) {
+                    stopVoiceRecording();
+                }
+            });
+        }
+
+        function startVoiceRecording() {
+            if (isRecording) return;
+            
+            isRecording = true;
+            const voiceBtn = document.getElementById('voiceBtn');
+            const icon = voiceBtn.querySelector('i');
+            const label = voiceBtn.querySelector('.btn-label');
+            
+            // 更新按钮样式
+            voiceBtn.classList.add('btn-voice-recording');
+            label.textContent = '松开发送';
+            
+            // 显示录音提示
+            showToast('正在录音...');
+            
+            // 震动反馈（如果支持）
+            if (navigator.vibrate) {
+                navigator.vibrate(50);
+            }
+        }
+
+        function stopVoiceRecording() {
+            if (!isRecording) return;
+            
+            isRecording = false;
+            const voiceBtn = document.getElementById('voiceBtn');
+            const icon = voiceBtn.querySelector('i');
+            const label = voiceBtn.querySelector('.btn-label');
+            
+            // 恢复按钮样式
+            voiceBtn.classList.remove('btn-voice-recording');
+            label.textContent = '按住说话';
+            
+            // 震动反馈（如果支持）
+            if (navigator.vibrate) {
+                navigator.vibrate(30);
+            }
+            
+            // 播放demo.mp3
+            playDemoAudio();
+        }
+
+        async function playDemoAudio() {
+            showToast('正在播放语音...');
+            
+            try {
+                // 检查demo.mp3是否存在
+                const demoExists = await checkFileExists('./demo.mp3');
+                
+                if (!demoExists) {
+                    speak('请往左边走10米，注意前方的台阶，再往右走。');
+                    return;
+                }
+                
+                // 停止当前正在播放的音频
+                stopAllAudio();
+                
+                // 创建新的音频元素并播放
+                const audio = new Audio('./demo.mp3');
+                currentAudioElement = audio;
+                
+                audio.onended = () => {
+                    if (currentAudioElement === audio) {
+                        currentAudioElement = null;
+                    }
+                    showToast('语音播放完成');
+                };
+                
+                audio.onerror = () => {
+                    showToast('语音播放失败');
+                    speak('语音播放失败');
+                };
+                
+                await audio.play();
+                
+            } catch (error) {
+                console.error('播放demo.mp3失败:', error);
+                showToast('语音播放失败');
+                speak('语音播放失败');
+            }
+        }
+
+        // 确保在页面卸载时停止避障模式
+        window.addEventListener('beforeunload', () => {
+            if (isObstacleModeActive) {
+                stopObstacleMode();
+            }
+        });
     </script>
 </body>
 
