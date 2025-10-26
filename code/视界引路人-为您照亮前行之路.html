@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>视界引路人 - 为您照亮前行之路</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --bg-light: #ecf0f1;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', '微软雅黑', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--primary-color);
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: none;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--secondary-color), var(--success-color));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: rotate(5deg) scale(1.1);
+        }
+
+        .btn-primary-custom {
+            background: linear-gradient(135deg, var(--secondary-color), var(--success-color));
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 25px;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+            color: white;
+        }
+
+        .btn-danger-custom {
+            background: linear-gradient(135deg, var(--accent-color), #c0392b);
+            border: none;
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .status-active {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .status-inactive {
+            background-color: #95a5a6;
+            color: white;
+        }
+
+        .voice-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background-color: var(--success-color);
+            border-radius: 50%;
+            margin-left: 0.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.5);
+                opacity: 0.5;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .location-info {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .facility-item {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            border-left: 3px solid var(--secondary-color);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .facility-item:hover {
+            background-color: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .direction-guide {
+            background: linear-gradient(135deg, #fff, #f0f8ff);
+            border: 1px solid var(--secondary-color);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .shortcut-key {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            margin-left: 0.5rem;
+        }
+
+        .video-preview {
+            width: 100%;
+            max-width: 400px;
+            height: 225px;
+            background-color: #000;
+            border-radius: 8px;
+            margin: 1rem auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .video-preview video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .alert-custom {
+            border: none;
+            border-radius: 10px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .alert-info-custom {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .alert-success-custom {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, .3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(135deg, var(--secondary-color), var(--success-color));
+            border-radius: 2px;
+        }
+
+        .map-container {
+            width: 100%;
+            height: 400px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            margin-top: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #baiduMap {
+            width: 100%;
+            height: 100%;
+        }
+
+        .floating-voice-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--secondary-color), var(--success-color));
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1000;
+        }
+
+        .floating-voice-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .floating-voice-btn.recording {
+            animation: recording 1.5s infinite;
+            background: linear-gradient(135deg, var(--accent-color), #c0392b);
+        }
+
+        @keyframes recording {
+
+            0%,
+            100% {
+                box-shadow: 0 5px 20px rgba(231, 76, 60, 0.6);
+            }
+
+            50% {
+                box-shadow: 0 5px 30px rgba(231, 76, 60, 0.9);
+            }
+        }
+
+        .api-key-input {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .analysis-result {
+            background: linear-gradient(135deg, #f8f9fa, #fff);
+            border-left: 4px solid var(--success-color);
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 0 8px 8px 0;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 页头 -->
+    <header class="header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h1 class="h2 mb-0">
+                        <i class="bi bi-eye-fill me-2"></i>视界引路人
+                    </h1>
+                    <p class="mb-0 mt-1 opacity-75">为您照亮前行之路</p>
+                </div>
+                <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                    <button class="btn btn-light btn-sm me-2" onclick="toggleVoiceGuide()">
+                        <i class="bi bi-mic-fill me-1"></i>语音引导
+                        <span id="voiceStatus" class="voice-indicator"></span>
+                    </button>
+                    <span class="status-badge status-inactive" id="systemStatus">系统就绪</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- API配置区域 -->
+    <div class="container mb-4">
+        <div class="alert alert-info-custom alert-custom">
+            <h5><i class="bi bi-gear-fill me-2"></i>API配置</h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <label class="form-label">百度地图API Key：</label>
+                    <input type="password" class="form-control api-key-input" id="baiduApiKey"
+                        placeholder="请输入您的百度地图API Key" value="YOUR_BAIDU_API_KEY">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">大模型API Key：</label>
+                    <input type="password" class="form-control api-key-input" id="llmApiKey"
+                        placeholder="请输入您的大模型API Key" value="YOUR_LLM_API_KEY">
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-6">
+                    <label class="form-label">SiliconFlow TTS API Key：</label>
+                    <input type="password" class="form-control api-key-input" id="siliconflowTtsApiKey"
+                        placeholder="请输入您的 SiliconFlow TTS Key" value="">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">TTS 语音与参数：</label>
+                    <div class="d-flex gap-2">
+                        <input type="text" class="form-control" id="ttsVoice"
+                            placeholder="voice，如 fnlp/MOSS-TTSD-v0.5:alex" value="fnlp/MOSS-TTSD-v0.5:alex">
+                        <select id="ttsFormat" class="form-select" style="max-width: 120px;">
+                            <option value="mp3" selected>mp3</option>
+                            <option value="wav">wav</option>
+                        </select>
+                        <input type="number" class="form-control" id="ttsSampleRate" style="max-width: 140px;"
+                            placeholder="采样率" value="32000" min="8000" step="1000">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主容器 -->
+    <main class="main-container">
+        <!-- 功能模块1：智能感知与场景解析 -->
+        <section class="feature-card">
+            <div class="row align-items-center">
+                <div class="col-md-2">
+                    <div class="feature-icon">
+                        <i class="bi bi-camera-video"></i>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <h2 class="section-title">智能感知与场景解析</h2>
+                    <p class="mb-3">通过摄像头捕捉环境，AI为您描述周围场景、障碍物，让您"看见"身边的世界</p>
+                    <div class="d-flex flex-wrap gap-2">
+                        <button class="btn btn-primary-custom" onclick="startVideoRecording()">
+                            <span class="loading-spinner" id="videoLoading"></span>
+                            <i class="bi bi-camera-video me-2"></i>开始录制视频
+                            <span class="shortcut-key">F12</span>
+                        </button>
+                        <button class="btn btn-danger-custom" onclick="stopVideoRecording()">
+                            <i class="bi bi-stop-fill me-2"></i>停止录制
+                        </button>
+                        <button class="btn btn-outline-primary" onclick="captureFrameForAnalysis()">
+                            <i class="bi bi-camera me-2"></i>分析当前画面
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-2 text-center">
+                    <div class="video-preview" id="videoPreview">
+                        <span id="videoPlaceholder">摄像头预览</span>
+                        <video id="videoElement" style="display: none;" autoplay muted></video>
+                    </div>
+                </div>
+            </div>
+
+            <div id="videoAnalysis" class="analysis-result">
+                <h5><i class="bi bi-brain-fill me-2"></i>AI分析结果</h5>
+                <div id="analysisContent"></div>
+            </div>
+        </section>
+
+        <!-- 功能模块2：出行辅助与设施导航 -->
+        <section class="feature-card">
+            <div class="row">
+                <div class="col-md-6">
+                    <h2 class="section-title">位置定位</h2>
+                    <button class="btn btn-primary-custom mb-3" onclick="getCurrentLocation()">
+                        <i class="bi bi-geo-alt-fill me-2"></i>获取当前位置
+                        <span class="shortcut-key">Ctrl+L</span>
+                    </button>
+
+                    <div id="locationInfo" class="location-info" style="display: none;">
+                        <h5><i class="bi bi-geo-fill me-2"></i>当前位置信息</h5>
+                        <p id="locationText" class="mb-1"></p>
+                        <p class="mb-0"><small id="coordinatesText"></small></p>
+                    </div>
+
+                    <div class="map-container">
+                        <div id="baiduMap"></div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <h2 class="section-title">周边设施导航</h2>
+                    <div class="mb-3">
+                        <label class="form-label">选择设施类型：</label>
+                        <div class="btn-group w-100" role="group">
+                            <input type="radio" class="btn-check" name="facilityType" id="type1" value="商场" checked>
+                            <label class="btn btn-outline-primary" for="type1">
+                                <i class="bi bi-building me-1"></i>商场
+                            </label>
+
+                            <input type="radio" class="btn-check" name="facilityType" id="type2" value="酒店">
+                            <label class="btn btn-outline-primary" for="type2">
+                                <i class="bi bi-door-open me-1"></i>酒店
+                            </label>
+
+                            <input type="radio" class="btn-check" name="facilityType" id="type3" value="饭店">
+                            <label class="btn btn-outline-primary" for="type3">
+                                <i class="bi bi-cup-hot me-1"></i>饭店
+                            </label>
+
+                            <input type="radio" class="btn-check" name="facilityType" id="type4" value="医院">
+                            <label class="btn btn-outline-primary" for="type4">
+                                <i class="bi bi-hospital me-1"></i>医院
+                            </label>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary-custom mb-3" onclick="searchNearbyFacilities()">
+                        <i class="bi bi-search me-2"></i>搜索周边设施
+                        <span class="shortcut-key">Ctrl+F</span>
+                    </button>
+
+                    <div id="facilitiesList" style="max-height: 300px; overflow-y: auto;">
+                        <div class="text-center text-muted py-4">
+                            <i class="bi bi-geo-alt-slash" style="font-size: 2rem;"></i>
+                            <p>请先获取位置，然后搜索周边设施</p>
+                        </div>
+                    </div>
+
+                    <div id="directionGuide" class="direction-guide">
+                        <h5><i class="bi bi-compass-fill me-2"></i>路线指引</h5>
+                        <div id="directionContent"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 浮动语音按钮 -->
+    <button class="floating-voice-btn" id="floatingVoiceBtn" onclick="toggleVoiceGuide()">
+        <i class="bi bi-mic-fill"></i>
+    </button>
+
+    <!-- 百度地图脚本 -->
+    <script type="text/javascript">
+        window.onload = function () {
+            // 初始化百度地图（如果API Key已配置）
+            initBaiduMap();
+        };
+
+        function initBaiduMap() {
+            const baiduApiKey = 'gjrecFg5GiyrxK4g24rI93p0GwVyp8M8';
+            if (baiduApiKey && baiduApiKey !== 'YOUR_BAIDU_API_KEY') {
+                // 动态加载百度地图API
+                const script = document.createElement('script');
+                script.src = `https://api.map.baidu.com/api?v=3.0&ak=${baiduApiKey}&callback=loadBaiduMap`;
+                document.head.appendChild(script);
+            }
+        }
+
+        function loadBaiduMap() {
+            // 百度地图加载完成后的回调
+            console.log('百度地图API已加载');
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // 全局变量
+        let isRecording = false;
+        let voiceEnabled = true;
+        let currentLocation = null;
+        let videoStream = null;
+        let baiduMap = null;
+        let currentMarker = null;
+        let mapLoaded = false;
+
+        // 百度地图相关函数
+        // 百度地图相关函数
+        function initBaiduMap() {
+            const baiduApiKey = 'gjrecFg5GiyrxK4g24rI93p0GwVyp8M8';
+            if (baiduApiKey && baiduApiKey !== 'YOUR_BAIDU_API_KEY') {
+                const script = document.createElement('script');
+                script.src = `https://api.map.baidu.com/api?v=3.0&ak=${baiduApiKey}&callback=loadBaiduMap`;
+                document.head.appendChild(script);
+            } else {
+                // 使用静态地图作为占位符
+                const mapContainer = document.getElementById('baiduMap');
+                mapContainer.innerHTML = `
+            <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-light">
+                <div class="text-center">
+                    <i class="bi bi-map" style="font-size: 3rem; color: #ccc;"></i>
+                    <p class="text-muted mt-2">请配置百度地图API Key</p >
+                </div>
+            </div>
+        `;
+            }
+        }
+
+        function loadBaiduMap() {
+            mapLoaded = true;
+            const mapContainer = document.getElementById('baiduMap');
+            mapContainer.innerHTML = '';
+
+            baiduMap = new BMap.Map(mapContainer);
+            baiduMap.centerAndZoom(new BMap.Point(116.404, 39.915), 15);
+            baiduMap.enableScrollWheelZoom(true);
+            baiduMap.addControl(new BMap.NavigationControl());
+            baiduMap.addControl(new BMap.ScaleControl());
+
+            console.log('百度地图已初始化');
+        }
+
+        // 使用 SiliconFlow 进行 TTS 并播放
+        async function speakViaSiliconFlow(text) {
+            const apiKey = "sk-peeipuaafuownpoagrysprzxtdbindflwpnbdhtassidhtxs";
+            if (!apiKey) throw new Error('NO_TTS_KEY');
+
+            const voice = document.getElementById('ttsVoice')?.value?.trim() || 'fnlp/MOSS-TTSD-v0.5:alex';
+            const responseFormat = document.getElementById('ttsFormat')?.value || 'mp3';
+            const sampleRate = parseInt(document.getElementById('ttsSampleRate')?.value || '32000', 10);
+
+            const body = {
+                model: 'FunAudioLLM/CosyVoice2-0.5B',
+                input: text,
+                max_tokens: 2048,
+                references: [],
+                voice,
+                response_format: responseFormat,
+                sample_rate: sampleRate,
+                stream: false,
+                speed: 1.3,
+                gain: 0
+            };
+
+            const res = await fetch('https://api.siliconflow.cn/v1/audio/speech', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${apiKey}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            });
+
+            if (!res.ok) {
+                const msg = await res.text();
+                throw new Error(`TTS_FAILED: ${msg}`);
+            }
+
+            // SiliconFlow 返回的是音频数据流或 base64；优先尝试 blob
+            const contentType = res.headers.get('content-type') || '';
+            let audioUrl;
+            if (contentType.includes('application/json')) {
+                const data = await res.json();
+                // 兼容返回 {audio: base64}
+                const base64 = data.audio || data.data || '';
+                if (!base64) throw new Error('NO_AUDIO_IN_RESPONSE');
+                const byteChars = atob(base64);
+                const byteNumbers = new Array(byteChars.length);
+                for (let i = 0; i < byteChars.length; i++) byteNumbers[i] = byteChars.charCodeAt(i);
+                const byteArray = new Uint8Array(byteNumbers);
+                const blob = new Blob([byteArray], { type: `audio/${responseFormat}` });
+                audioUrl = URL.createObjectURL(blob);
+            } else {
+                const blob = await res.blob();
+                audioUrl = URL.createObjectURL(blob);
+            }
+
+            const audio = new Audio(audioUrl);
+            await audio.play();
+        }
+
+        // 语音播报功能（优先 SiliconFlow，失败回退浏览器合成）
+        async function speak(text) {
+            if (!voiceEnabled) return;
+            try {
+                await speakViaSiliconFlow(text);
+                return;
+            } catch (e) {
+                // 若无 Key 或请求失败，回退到浏览器语音合成
+            }
+
+            if ('speechSynthesis' in window) {
+                try {
+                    speechSynthesis.cancel();
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = 'zh-CN';
+                    utterance.rate = 0.9;
+                    utterance.pitch = 1;
+                    utterance.volume = 1;
+                    speechSynthesis.speak(utterance);
+                } catch (_) { }
+            }
+        }
+
+        // 切换语音引导
+        function toggleVoiceGuide() {
+            voiceEnabled = !voiceEnabled;
+            const voiceStatus = document.getElementById('voiceStatus');
+            const floatingVoiceBtn = document.getElementById('floatingVoiceBtn');
+
+            if (voiceEnabled) {
+                voiceStatus.style.display = 'inline-block';
+                floatingVoiceBtn.classList.remove('recording');
+                speak('语音引导已开启');
+            } else {
+                voiceStatus.style.display = 'none';
+                floatingVoiceBtn.classList.add('recording');
+                speak('语音引导已关闭');
+            }
+        }
+
+        // 开始视频录制
+        async function startVideoRecording() {
+            if (isRecording) {
+                speak('录制已开始，请先停止当前录制');
+                return;
+            }
+
+            try {
+                const videoLoading = document.getElementById('videoLoading');
+                videoLoading.style.display = 'inline-block';
+
+                videoStream = await navigator.mediaDevices.getUserMedia({
+                    video: { width: 1280, height: 720 },
+                    audio: false
+                });
+
+                const videoElement = document.getElementById('videoElement');
+                videoElement.srcObject = videoStream;
+                videoElement.style.display = 'block';
+                document.getElementById('videoPlaceholder').style.display = 'none';
+
+                isRecording = true;
+                document.getElementById('systemStatus').textContent = '录制中...';
+                document.getElementById('systemStatus').className = 'status-badge status-active';
+
+                speak('视频录制已开始，请录制15秒左右的视频，然后点击停止录制或分析当前画面');
+
+                videoLoading.style.display = 'none';
+
+            } catch (err) {
+                console.error('无法访问摄像头:', err);
+                speak('无法访问摄像头，请检查设备权限');
+                alert('无法访问摄像头，请检查设备权限');
+            }
+        }
+
+        // 停止视频录制
+        function stopVideoRecording() {
+            if (!isRecording) {
+                speak('当前没有正在进行的录制');
+                return;
+            }
+
+            if (videoStream) {
+                videoStream.getTracks().forEach(track => track.stop());
+                videoStream = null;
+            }
+
+            const videoElement = document.getElementById('videoElement');
+            videoElement.srcObject = null;
+            videoElement.style.display = 'none';
+            document.getElementById('videoPlaceholder').style.display = 'block';
+
+            isRecording = false;
+            document.getElementById('systemStatus').textContent = '就绪';
+            document.getElementById('systemStatus').className = 'status-badge status-inactive';
+        }
+
+        // 捕获帧并分析
+        function captureFrameForAnalysis() {
+            const videoElement = document.getElementById('videoElement');
+
+            if (!videoElement.srcObject) {
+                speak('请先开启摄像头');
+                return;
+            }
+
+            // 创建canvas捕获当前帧
+            const canvas = document.createElement('canvas');
+            canvas.width = videoElement.videoWidth;
+            canvas.height = videoElement.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(videoElement, 0, 0);
+
+            const imageData = canvas.toDataURL('image/png');
+
+            // 调用大模型分析图像
+            analyzeImageWithLLM(imageData);
+        }
+
+        // 使用大模型分析图像
+        async function analyzeImageWithLLM(imageData) {
+            const llmApiKey = 'sk-oNV9GO4zfL6sIvMN418eB2824e1f46C9918f0c0eFa718247';
+            const analysisDiv = document.getElementById('videoAnalysis');
+            const contentDiv = document.getElementById('analysisContent');
+
+            if (!llmApiKey) {
+                speak('请配置大模型API Key');
+                analysisDiv.style.display = 'block';
+                contentDiv.innerHTML = '<p class="text-muted">请配置大模型API Key以使用图像分析功能</p>';
+                return;
+            }
+
+            analysisDiv.style.display = 'block';
+            contentDiv.innerHTML = '<div class="loading-spinner"></div><span>正在分析图像...</span>';
+
+            try {
+                // 这里使用OpenAI API作为示例，您可以根据需要替换为其他大模型API
+                const response = await fetch('https://api.csun.site/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${llmApiKey}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        model: 'gpt-4o-mini',
+                        messages: [{
+                            role: 'user',
+                            content: [
+                                { type: 'text', text: '请详细描述这张图像中的场景，包括：1. 整体环境描述；2. 障碍物位置和类型；3. 如果有行人，请描述其表情和姿态。请用简洁易懂的语言，便于盲人用户理解。' },
+                                { type: 'image_url', image_url: { url: imageData } }
+                            ]
+                        }],
+                        max_tokens: 1000
+                    })
+                });
+
+                const data = await response.json();
+                const analysisText = data.choices[0].message.content;
+
+                contentDiv.innerHTML = `<p>${analysisText.replace(/\n/g, '<br>')}</p>`;
+                speak('图像分析完成');
+
+                // 语音播报分析结果
+                speak(analysisText);
+
+            } catch (error) {
+                console.error('图像分析失败:', error);
+                contentDiv.innerHTML = '<p class="text-danger">图像分析失败，请检查API配置和网络连接</p>';
+                speak('图像分析失败，请检查API配置');
+            }
+        }
+
+        // 获取当前位置
+        async function getCurrentLocation() {
+            const locationInfo = document.getElementById('locationInfo');
+            const locationText = document.getElementById('locationText');
+            const coordinatesText = document.getElementById('coordinatesText');
+
+            speak('正在获取您的位置...');
+
+            try {
+                // 获取浏览器位置
+                // const position = await getCurrentBrowserLocation();
+
+                // if (position) {
+                   if (true) {
+                    currentLocation = {
+                        // latitude: position.coords.latitude,
+                        // longitude: position.coords.longitude
+                        latitude: 40.08873483,
+                        longitude: 116.22677400,
+                    };
+
+                    // 使用百度地图逆地理编码获取地址
+                    const baiduApiKey = 'gjrecFg5GiyrxK4g24rI93p0GwVyp8M8';
+                    if (baiduApiKey && mapLoaded) {
+                        const geocoder = new BMap.Geocoder();
+                        const point = new BMap.Point(currentLocation.longitude, currentLocation.latitude);
+
+                        geocoder.getLocation(point, function (result) {
+                            if (result) {
+                                locationText.textContent = result.address;
+                                coordinatesText.textContent = `经度: ${currentLocation.longitude.toFixed(6)}, 纬度: ${currentLocation.latitude.toFixed(6)}`;
+                                locationInfo.style.display = 'block';
+
+                                // 在百度地图上显示位置
+                                showLocationOnMap(currentLocation.longitude, currentLocation.latitude, result.address);
+
+                                speak(`您当前在${result.address}`);
+                            }
+                        });
+                    } else {
+                        // 模拟地址信息
+                        const mockAddress = '北京市朝阳区某某街道某某号';
+                        locationText.textContent = mockAddress;
+                        coordinatesText.textContent = `经度: ${currentLocation.longitude.toFixed(6)}, 纬度: ${currentLocation.latitude.toFixed(6)}`;
+                        locationInfo.style.display = 'block';
+
+                        speak(`您当前在${mockAddress}`);
+                    }
+                }
+            } catch (error) {
+                console.error('获取位置失败:', error);
+                speak('无法获取您的位置，请检查定位权限');
+                alert('无法获取您的位置，请检查定位权限');
+            }
+        }
+
+        // 获取浏览器位置
+        function getCurrentBrowserLocation() {
+            return new Promise((resolve, reject) => {
+                if (!navigator.geolocation) {
+                    reject(new Error('浏览器不支持地理定位'));
+                    return;
+                }
+
+                navigator.geolocation.getCurrentPosition(
+                    position => resolve(position),
+                    error => reject(error),
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 300000
+                    }
+                );
+            });
+        }
+
+        // 在百度地图上显示位置
+        function showLocationOnMap(lng, lat, address) {
+            if (!mapLoaded || !baiduMap) return;
+
+            if (currentMarker) {
+                baiduMap.removeOverlay(currentMarker);
+            }
+
+            const point = new BMap.Point(lng, lat);
+            currentMarker = new BMap.Marker(point);
+            baiduMap.addOverlay(currentMarker);
+            baiduMap.centerAndZoom(point, 16);
+
+            const infoWindow = new BMap.InfoWindow(address);
+            currentMarker.addEventListener('click', function () {
+                this.openInfoWindow(infoWindow);
+            });
+        }
+
+        // 搜索周边设施
+        function searchNearbyFacilities() {
+            // if (!currentLocation) {
+            //     speak('请先获取当前位置');
+            //     return;
+            // }
+
+            const facilitiesList = document.getElementById('facilitiesList');
+            const selectedType = document.querySelector('input[name="facilityType"]:checked').value;
+
+            speak(`正在搜索附近的${selectedType}...`);
+
+            const baiduApiKey = 'gjrecFg5GiyrxK4g24rI93p0GwVyp8M8';
+            if (baiduApiKey && mapLoaded) {
+                // 使用百度地图搜索周边设施
+                const point = new BMap.Point(currentLocation.longitude, currentLocation.latitude);
+                const local = new BMap.LocalSearch(baiduMap, {
+                    renderOptions: { map: baiduMap, autoViewport: true },
+                    pageCapacity: 10
+                });
+
+                local.setSearchCompleteCallback(function (results) {
+                    if (local.getResultsNum() > 0) {
+                        displayFacilities(results.PoiInfoList.Poi, selectedType);
+                    } else {
+                        facilitiesList.innerHTML = '<p class="text-center text-muted">未找到附近的设施</p>';
+                        speak(`未找到附近的${selectedType}`);
+                    }
+                });
+
+                // 搜索指定类型的设施
+                const searchTypes = {
+                    '商场': '商场',
+                    '酒店': '酒店',
+                    '饭店': '餐饮',
+                    '医院': '医院'
+                };
+
+                local.searchNearby(searchTypes[selectedType], point, 1000);
+
+            } else {
+                // 模拟搜索结果
+                facilitiesList.innerHTML = '<div class="spinner-border text-primary" role="status"></div>';
+
+                setTimeout(() => {
+                    const mockFacilities = generateMockFacilities(selectedType);
+                    displayFacilities(mockFacilities, selectedType);
+                }, 2000);
+            }
+        }
+
+        // 生成模拟设施数据
+        function generateMockFacilities(type) {
+            const facilities = [
+                { name: `${type}A`, address: '某某街道123号', distance: 200, direction: '东侧', rating: 4.5, accessible: true },
+                { name: `${type}B`, address: '某某路456号', distance: 350, direction: '南侧', rating: 4.2, accessible: false },
+                { name: `${type}C`, address: '某某大道789号', distance: 500, direction: '西侧', rating: 4.8, accessible: true },
+                { name: `${type}D`, address: '某某胡同101号', distance: 650, direction: '北侧', rating: 4.0, accessible: true }
+            ];
+
+            return facilities.map(facility => ({
+                ...facility,
+                point: new BMap.Point(
+                    currentLocation.longitude + (Math.random() - 0.5) * 0.01,
+                    currentLocation.latitude + (Math.random() - 0.5) * 0.01
+                )
+            }));
+        }
+
+        // 显示设施列表
+        function displayFacilities(facilities, type) {
+            const facilitiesList = document.getElementById('facilitiesList');
+
+            if (facilities.length === 0) {
+                facilitiesList.innerHTML = '<p class="text-center text-muted">未找到附近的设施</p>';
+                speak(`未找到附近的${type}`);
+                return;
+            }
+
+            facilitiesList.innerHTML = facilities.map(facility => `
+                <div class="facility-item" onclick="selectFacility('${facility.name}', '${facility.address}', ${facility.distance}, '${facility.direction}', ${facility.rating}, ${facility.accessible || false})">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="mb-1">${facility.name}</h6>
+                            <p class="mb-1 text-muted">
+                                <i class="bi bi-geo-alt me-1"></i>${facility.address}
+                            </p>
+                            <small class="text-muted">
+                                <i class="bi bi-star-fill text-warning me-1"></i>${facility.rating}分
+                                ${facility.accessible ? '<i class="bi bi-universal-access text-success ms-2"></i>无障碍' : ''}
+                            </small>
+                        </div>
+                        <div class="text-end">
+                            <small class="text-muted d-block">${facility.distance}米</small>
+                            <small class="text-muted">${facility.direction}</small>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            speak(`找到了${facilities.length}个附近的${type}，最近的是${facilities[0].name}，在${facilities[0].direction}方向，距离${facilities[0].distance}米`);
+        }
+
+        // 选择设施
+        function selectFacility(name, address, distance, direction, rating, accessible) {
+            const directionGuide = document.getElementById('directionGuide');
+            const directionContent = document.getElementById('directionContent');
+
+            // 生成智能路线指引
+            const directions = generateIntelligentDirections(name, address, distance, direction);
+
+            directionContent.innerHTML = `
+                <p><strong>目的地：</strong>${name}</p>
+                <p><strong>地址：</strong>${address}</p>
+                <p><strong>评分：</strong>${rating}分 ${accessible ? '<span class="badge bg-success">无障碍</span>' : ''}</p>
+                <div class="alert alert-info-custom mt-3">
+                    <h6><i class="bi bi-info-circle me-2"></i>智能路线指引</h6>
+                    <p>${directions}</p>
+                </div>
+                <div class="d-flex gap-2 mt-3">
+                    <button class="btn btn-primary btn-sm" onclick="startNavigation('${name}', ${distance}, '${direction}')">
+                        <i class="bi bi-play-circle me-1"></i>开始导航
+                    </button>
+                    <button class="btn btn-outline-primary btn-sm" onclick="callFacility('${name}')">
+                        <i class="bi bi-telephone me-1"></i>致电咨询
+                    </button>
+                </div>
+            `;
+
+            directionGuide.style.display = 'block';
+            speak(directions);
+        }
+
+        // 生成智能路线指引
+        function generateIntelligentDirections(name, address, distance, direction) {
+            const directionTemplates = [
+                `请沿当前道路向${direction}走${distance}米，然后注意观察路标，${name}就在您的左手边。门口有明显的标识，很易找到。`,
+                `从您的位置出发，先向${direction}走，遇到第一个红绿灯后继续直行，大约${distance}米就能看到${name}。建议您提前关注门口的无障碍设施。`,
+                `使用盲道指引，向${direction}方向前进。在距离${distance}米处，${name}的入口位于您右手边，有坡道方便进入。`,
+                `请转向${direction}方向，走${distance}米后留意右侧的建筑。${name}的招牌很醒目，如果有困难可以向路人求助，附近的人都挺友善的。`
+            ];
+
+            return directionTemplates[Math.floor(Math.random() * directionTemplates.length)];
+        }
+
+        // 开始导航
+        function startNavigation(name, distance, direction) {
+            speak(`导航已开始，目的地是${name}，请向${direction}方向前进，距离约${distance}米`);
+            // 这里可以集成真实的导航API
+        }
+
+        // 致电设施
+        function callFacility(name) {
+            speak(`正在为您拨打${name}的电话...`);
+            // 这里可以集成真实的拨号功能
+        }
+
+        // 键盘快捷键监听
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'F12') {
+                e.preventDefault();
+                if (isRecording) {
+                    stopVideoRecording();
+                } else {
+                    startVideoRecording();
+                }
+            } else if (e.ctrlKey && e.key === 'l') {
+                e.preventDefault();
+                getCurrentLocation();
+            } else if (e.ctrlKey && e.key === 'f') {
+                e.preventDefault();
+                searchNearbyFacilities();
+            } else if (e.ctrlKey && e.key === 'v') {
+                e.preventDefault();
+                toggleVoiceGuide();
+            } else if (e.ctrlKey && e.key === 'h') {
+                e.preventDefault();
+                emergencyHelp();
+            }
+        });
+
+        // 紧急求助
+        function emergencyHelp() {
+            speak('正在连接紧急联系人...');
+            // 这里可以集成真实的紧急呼叫功能
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            speak('欢迎使用视界引路人，请先配置API Key，然后按F12开始录制视频，按Ctrl+L获取位置');
+
+            // 检查并初始化百度地图
+            setTimeout(() => {
+                initBaiduMap();
+            }, 1000);
+        });
+
+        // API Key输入框变化监听
+        document.getElementById('baiduApiKey').addEventListener('input', function () {
+            if (this.value && this.value !== 'YOUR_BAIDU_API_KEY') {
+                initBaiduMap();
+            }
+        });
+    </script>
+</body>
+
+</html>
