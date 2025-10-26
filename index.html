@@ -803,11 +803,11 @@
     <!-- 功能面板 -->
     <div class="side-panel" id="featuresPanel">
         <div class="panel-header">
-            <h2 class="panel-title">智能功能</h2>
+            <h2 class="panel-title">智能分析</h2>
             <button class="panel-close" onclick="closePanel('features')">完成</button>
         </div>
         <div class="panel-content">
-            <div class="feature-section">
+            <!-- <div class="feature-section">
                 <div class="section-header">场景识别</div>
                 <div class="feature-card">
                     <h4><i class="bi bi-camera-video me-2"></i> 智能场景解析</h4>
@@ -817,20 +817,20 @@
                             <i class="bi bi-play-circle me-1"></i> 开始分析
                         </button>
                     </div>
-                </div>
+                </div> -->
 
                 <div id="analysisResult" style="display: none;">
                     <div class="analysis-card">
                         <div class="analysis-header">
                             <i class="bi bi-stars"></i> 
-                            <strong>AI分析结果</strong>
+                            <strong>AI解析中</strong>
                         </div>
                         <div class="analysis-content" id="analysisText"></div>
                     </div>
                 </div>
             </div>
 
-            <div class="feature-section">
+            <!-- <div class="feature-section">
                 <div class="section-header">避障模式</div>
                 <div class="feature-card">
                     <h4><i class="bi bi-shield-check me-2"></i> 纯避障检测</h4>
@@ -854,7 +854,7 @@
                         </button>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 
@@ -1192,7 +1192,7 @@
                 'location': '位置导航面板',
                 'settings': '设置面板'
             };
-            speak(`快速打开${titles[panelName]}`);
+            // speak(`快速打开${titles[panelName]}`);
             showToast(`${titles[panelName]}已打开`);
         }
 
@@ -1289,10 +1289,10 @@
 
         function detectObstacle() {
             const obstacles = [
-                { type: '台阶', distance: '1米', action: '请小心', icon: '🪜' },
-                { type: '水洼', distance: '2米', action: '建议绕行', icon: '💧' },
-                { type: '车辆', distance: '3米', action: '注意安全', icon: '🚗' },
-                { type: '行人', distance: '1.5米', action: '请注意避让', icon: '🚶' },
+                { type: '台阶', distance: '2米', action: '请小心', icon: '🪜' },
+                // { type: '水洼', distance: '2米', action: '建议绕行', icon: '💧' },
+                // { type: '车辆', distance: '3米', action: '注意安全', icon: '🚗' },
+                { type: '行人', distance: '3米', action: '请注意避让', icon: '🚶' },
                 { type: '障碍物', distance: '2.5米', action: '前方有阻挡', icon: '⚠️' },
                 { type: '低矮物体', distance: '1米', action: '小心碰撞', icon: '📦' }
             ];
@@ -1300,9 +1300,9 @@
             const obstacle = obstacles[Math.floor(Math.random() * obstacles.length)];
             const message = `${obstacle.icon} 前方${obstacle.distance}处有${obstacle.type}，${obstacle.action}`;
             
+            speak(message);
             showToast(message);
             // 停止之前的语音，播放新的障碍物提醒
-            speak(message);
         }
 
         function stopObstacleMode() {
@@ -1955,7 +1955,7 @@
                     voice: 'fnlp/MOSS-TTSD-v0.5:alex',
                     response_format: 'mp3',
                     sample_rate: 32000,
-                    speed: 1.
+                    speed: 1.2
                 })
             });
 
@@ -2837,7 +2837,7 @@
                 const demoExists = await checkFileExists('./demo.mp3');
                 
                 if (!demoExists) {
-                    speak('请往左边走10米，注意前方的台阶，再往右走。');
+                    speak('检测到左前方5米处有室外桌椅，还有一个人看起来像是您的朋友在等您。');
                     return;
                 }
                 
